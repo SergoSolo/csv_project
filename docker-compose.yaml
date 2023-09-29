@@ -6,7 +6,7 @@ services:
     build: .
     command: sh -c "alembic upgrade head && uvicorn app.main:app --host=0.0.0.0 --port=8000"
     volumes: 
-      - app_data:/app
+      - app_data:/app/app/upload
     env_file: ./.env
     ports:
       - 8000:8000

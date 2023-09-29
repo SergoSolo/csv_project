@@ -7,7 +7,8 @@ from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import (check_column, check_document_exists,
-                                check_document_format, check_name_duplicate)
+                                check_document_format, check_document_is_empty,
+                                check_name_duplicate)
 from app.core.config import UPLOAD_DIR
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -20,7 +21,7 @@ DocumentInformation = TypeVar("DocumentInformation")
 
 
 @router.get(
-        '/',
+        "/",
         summary="Получить список документов.",
         response_model=list[DocumentSchemaDB],
         dependencies=[Depends(current_superuser)]
@@ -37,8 +38,8 @@ async def get_documents(
 
 
 @router.get(
-    '/{document_id}',
-    response_model=Page,
+    "/{document_id}",
+    response_model=Page[DocumentInformation],
     summary="Получить определенный файл.",
     dependencies=[Depends(current_superuser)]
 )
@@ -81,6 +82,7 @@ async def get_document(
         object_id=document.id,
         session=session
     )
+    print(document_path)
     data = pd.read_csv(document_path)
     data = data.fillna(0)
     if column_first and value_first:
@@ -92,7 +94,7 @@ async def get_document(
     if sort_column:
         check_column(document, sort_column)
         data = data.sort_values(by=sort_column)
-    return paginate(data.to_dict(orient='records'))
+    return paginate(data.to_dict(orient="records"))
 
 
 @router.post(
@@ -101,7 +103,7 @@ async def get_document(
         response_model=DocumentSchemaDB,
         dependencies=[Depends(current_superuser)]
 )
-async def upload_documentd(
+async def upload_document(
     document: UploadFile,
     session: AsyncSession = Depends(get_async_session)
 ) -> DocumentSchemaDB:
@@ -109,14 +111,16 @@ async def upload_documentd(
     Можно загрузить документ только csv формата.
     Доступно только для зарегистрированных пользователей.
     """
+    uploaded_document = check_document_is_empty(document.file)
     document_name = check_document_format(document.filename)
     await check_name_duplicate(document_name, session)
     document_path = os.path.join(UPLOAD_DIR, f"{document_name}")
+    document.file.seek(0)
     with open(document_path, "wb") as file:
         file.write(document.file.read())
     data = {
         "name": document_name,
-        "columns": pd.read_csv(document_path).columns,
+        "columns": uploaded_document.columns,
         "size": document.size,
         "path": document_path
     }
@@ -140,11 +144,7 @@ async def delete_document(
 
     - **document_id**: Идентификационный номер документа
     """
-    document_path = await documents_service.get_object_path(
-        document_id,
-        session
-    )
-    os.remove(document_path)
-    document = await documents_service.get_object(document_id, session)
+    document = await check_document_exists(document_id, session)
+    os.remove(document.path)
     await documents_service.delete_object(document, session)
     return document

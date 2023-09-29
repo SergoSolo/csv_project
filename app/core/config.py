@@ -26,11 +26,11 @@ class Settings(BaseSettings):
         )
 
     class Config:
-        env_file = '.env'
+        env_file = ".env"
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UPLOAD_DIR = os.path.join(BASE_DIR, 'upload')
+UPLOAD_DIR = os.path.join(BASE_DIR, "upload")
 
 settings = Settings()
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 def configure_logging():
     logging.basicConfig(
-        datefmt='%d.%m.%Y %H:%M:%S',
-        format='%(asctime)s, %(levelname)s, %(message)s',
+        datefmt="%d.%m.%Y %H:%M:%S",
+        format="%(asctime)s, %(levelname)s, %(message)s",
         level=logging.INFO
     )

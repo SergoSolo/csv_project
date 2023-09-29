@@ -1,8 +1,13 @@
+from typing import TypeVar
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+ModelType = TypeVar("ModelType")
+
 
 class CRUDEBase:
+    """Базовый класс для работы с базой данных."""
 
     def __init__(self, model) -> None:
         self.model = model
@@ -37,7 +42,7 @@ class CRUDEBase:
 
     async def delete_object(
         self,
-        db_object,
+        db_object: ModelType,
         session: AsyncSession
     ):
         await session.delete(db_object)
