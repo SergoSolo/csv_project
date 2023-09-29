@@ -73,7 +73,7 @@ docker-compose ps
 должен быть `running`):
 ```
 NAME                COMMAND                  SERVICE             STATUS              PORTS
-csv_api             "sh -c 'alembic upgr…"   bot                 running             0.0.0.0:8000->8000/tcp
+csv_api             "sh -c 'alembic upgr…"   api                 running             0.0.0.0:8000->8000/tcp
 csv_db              "docker-entrypoint.s…"   db                  running             0.0.0.0:5432->5432/tcp
 ```
 
