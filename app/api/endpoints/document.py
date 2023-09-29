@@ -40,7 +40,7 @@ async def get_documents(
 @router.get(
     "/{document_id}",
     response_model=Page[DocumentInformation],
-    summary="Получить определенный файл.",
+    summary="Получить определенный документ.",
     dependencies=[Depends(current_superuser)]
 )
 async def get_document(
