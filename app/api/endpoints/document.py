@@ -82,7 +82,6 @@ async def get_document(
         object_id=document.id,
         session=session
     )
-    print(document_path)
     data = pd.read_csv(document_path)
     data = data.fillna(0)
     if column_first and value_first:
