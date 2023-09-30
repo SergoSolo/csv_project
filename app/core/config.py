@@ -6,6 +6,8 @@ from pydantic import BaseSettings, EmailStr
 
 
 class Settings(BaseSettings):
+    """Настройки проекта."""
+
     APP_TITLE: str
     APP_DESCRIPTION: str
     SECRET: str

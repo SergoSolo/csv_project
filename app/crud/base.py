@@ -7,7 +7,7 @@ ModelType = TypeVar("ModelType")
 
 
 class CRUDEBase:
-    """Базовый класс для работы с базой данных."""
+    """Базовый класс для работы с моделями."""
 
     def __init__(self, model) -> None:
         self.model = model
