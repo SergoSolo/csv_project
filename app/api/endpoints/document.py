@@ -123,7 +123,10 @@ async def upload_document(
         "size": document.size,
         "path": document_path
     }
-    document = await documents_service.create(object_in=data, session=session)
+    document = await documents_service.create(
+        object_in=data,
+        session=session
+    )
     return document
 
 

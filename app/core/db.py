@@ -6,6 +6,7 @@ from app.core.config import settings
 
 
 class PreBase:
+    """Базовый класс моделей."""
 
     @declared_attr
     def __tablename__(cls):

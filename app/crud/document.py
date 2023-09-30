@@ -6,6 +6,7 @@ from app.models import Document
 
 
 class CRUDEDocument(CRUDEBase):
+    """Класс для работы с моделью Document."""
 
     async def get_document_id_by_name(
             self,
