@@ -11,7 +11,7 @@ from app.api.validators import (check_column, check_document_exists,
                                 check_name_duplicate)
 from app.core.config import UPLOAD_DIR
 from app.core.db import get_async_session
-from app.core.user import current_superuser
+from app.core.user import current_user
 from app.crud.document import documents_service
 from app.schemas.schemas import DocumentSchemaDB
 from app.utils import work_with_data
@@ -24,7 +24,7 @@ DocumentInformation = TypeVar("DocumentInformation")
         "/",
         summary="Получить список документов.",
         response_model=list[DocumentSchemaDB],
-        dependencies=[Depends(current_superuser)]
+        dependencies=[Depends(current_user)]
 )
 async def get_documents(
     session: AsyncSession = Depends(get_async_session)
@@ -41,7 +41,7 @@ async def get_documents(
     "/{document_id}",
     response_model=Page[DocumentInformation],
     summary="Получить определенный документ.",
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_user)]
 )
 async def get_document(
     document_id: int,
@@ -100,7 +100,7 @@ async def get_document(
         "/upload",
         summary="Загрузить документ.",
         response_model=DocumentSchemaDB,
-        dependencies=[Depends(current_superuser)]
+        dependencies=[Depends(current_user)]
 )
 async def upload_document(
     document: UploadFile,
@@ -110,8 +110,8 @@ async def upload_document(
     Можно загрузить документ только csv формата.
     Доступно только для зарегистрированных пользователей.
     """
-    uploaded_document = check_document_is_empty(document.file)
     document_name = check_document_format(document.filename)
+    uploaded_document = check_document_is_empty(document.file)
     await check_name_duplicate(document_name, session)
     document_path = os.path.join(UPLOAD_DIR, f"{document_name}")
     document.file.seek(0)
@@ -134,7 +134,7 @@ async def upload_document(
         "/delete/{document_id}",
         summary="Удалить документ.",
         response_model=DocumentSchemaDB,
-        dependencies=[Depends(current_superuser)]
+        dependencies=[Depends(current_user)]
 )
 async def delete_document(
     document_id: int,

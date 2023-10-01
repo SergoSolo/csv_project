@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.endpoints import documents_router, user_router
 
-main_router = APIRouter()
+main_router = APIRouter(prefix="/api")
 
 main_router.include_router(
     documents_router,
